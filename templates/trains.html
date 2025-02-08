@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Trains</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Available Trains</h1>
+        <div class="trains-list">
+            {% for train in trains %}
+            <div class="train-card">
+                <div class="train-info">
+                    <h3>Train {{ train.train_number }}</h3>
+                    <p><strong>From:</strong> {{ train.origin }}</p>
+                    <p><strong>To:</strong> {{ train.destination }}</p>
+                    <p><strong>Departure:</strong> {{ train.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p><strong>Arrival:</strong> {{ train.arrival_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p><strong>Price:</strong> RM{{ train.price }}</p>
+                </div>
+                <div class="train-actions">
+                    <a href="{{ url_for('seats', train_id=train.id) }}" class="btn">Select Seats</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('home') }}" class="btn back-btn">Back to Search</a>
+    </div>
+</body>
+</html>

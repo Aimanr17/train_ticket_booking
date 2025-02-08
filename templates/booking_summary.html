@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Booking Summary</h1>
+
+        <div class="summary-card">
+            <h2>Train Details</h2>
+            <p>Train Number: {{ train.train_number }}</p>
+            <p>From: {{ train.origin }}</p>
+            <p>To: {{ train.destination }}</p>
+            <p>Departure: {{ train.departure_time }}</p>
+            <p>Arrival: {{ train.arrival_time }}</p>
+
+            <h2>Selected Seats</h2>
+            <div class="selected-seats">
+                {% for seat in seats %}
+                <div class="seat-item">
+                    <p>Coach {{ seat.coach_number }} - Seat {{ seat.seat_number }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="total-amount">
+                <h3>Total Amount: RM{{ total }}</h3>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="confirm-booking">Confirm Booking</button>
+                <a href="{{ url_for('seats', train_id=train.id) }}" class="btn btn-secondary">Back to Seat Selection</a>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

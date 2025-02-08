@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Select Your Seats</h1>
+        <div class="train-info">
+            <h2>Train {{ train.train_number }}</h2>
+            <p><strong>From:</strong> {{ train.origin }} to {{ train.destination }}</p>
+            <p><strong>Departure:</strong> {{ train.departure_time.strftime('%Y-%m-%d %H:%M') }}</p>
+        </div>
+
+        <div class="seating-plan">
+            {% for coach in range(1, 7) %}
+            <div class="coach">
+                <h3>Coach {{ coach }}</h3>
+                <div class="seats">
+                    <div class="seat-numbers">
+                        <span class="row-label"></span>
+                        {% for num in range(1, 6) %}
+                        <span class="seat-number">{{ num }}</span>
+                        {% endfor %}
+                    </div>
+                    {% for row in ['A', 'B', 'C', 'D'] %}
+                    <div class="seat-row">
+                        <span class="row-label">{{ row }}</span>
+                        {% for seat_num in range(1, 6) %}
+                            {% set seat_number = row + seat_num|string %}
+                            {% set current_seat = seats|selectattr('coach_number', 'eq', coach)|selectattr('seat_number', 'eq', seat_number)|first %}
+                            <div class="seat {% if current_seat and current_seat.is_locked %}locked{% endif %}" 
+                                 data-seat-id="{{ current_seat.id if current_seat else (coach ~ '_' ~ seat_number) }}"
+                                 data-coach="{{ coach }}"
+                                 data-seat-number="{{ seat_number }}">
+                                {{ seat_number }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="selected-seats">
+            <h3>Selected Seats:</h3>
+            <ul id="selected-seats-list"></ul>
+            <p>Total Amount: RM<span id="total-amount">0.00</span></p>
+        </div>
+
+        <div class="actions">
+            <button id="confirm-seats" class="btn" disabled>Confirm Selection</button>
+            <a href="{{ url_for('trains') }}" class="btn back-btn">Back to Trains</a>
+        </div>
+    </div>
+
+    <script>
+        window.trainPrice = {{ train.price }};
+        window.trainId = {{ train.id }};
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io({
+            transports: ['websocket'],
+            upgrade: false
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
